@@ -1,0 +1,138 @@
+<style>
+    .home-container{
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+    }
+    .btn {
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }
+    .col {
+        margin:3%;   
+        margin-right:5%;    
+    }
+    .menu-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .menu-item h4 {
+        margin: 0;
+        color: black;
+    }
+
+    .titoli-menu {
+        font-size: 23px;
+        font-weight: 600;
+        margin: 0;
+        color: black;
+    }
+</style>
+{% load static %}
+<div class="col" id="menu">
+    <br>
+    <a id="soci" class="menu-item">
+        <p class="titoli-menu" style="float:left;">Soci</p><img src="{% static 'images/plus.svg' %}" height="20px" width="20px" style="align-items: right;" id="plus-minus-icon-soci">
+    </a><br />
+    <div style="display: none; clear:both">
+        <a href="{% url 'create_socio' %}"><button type="button" class="btn btn-warning">Aggiunta Socio</button></a>
+        <a href="{% url 'show_soci' %}"><button type="button" class="btn btn-warning" >Vedi soci</button></a>
+        <a href="{% url 'scarica_listaSoci' %}"><button type="button" class="btn btn-warning">Scarica lista Soci .xlsx</button></a><br>
+    </div>
+    <hr>
+    <a id="scambi" class="menu-item"><p class="titoli-menu" style="float:left">Scambi</p><img src="{% static 'images/plus.svg' %}" height="20px" width="20px" style="align-items: right;" id="plus-minus-icon-scambi"></a><br />
+    <div style="display: none;">
+        <a href="{% url 'create_scambio' %}"><button type="button" class="btn btn-warning">Aggiunta Scambio</button></a><br>
+        <a href="{% url 'show_scambi' %}"><button type="button" class="btn btn-warning">Vedi scambi</button></a>
+        <a href="{% url 'ore_soci' %}"><button type="button" class="btn btn-warning">Vedi ore date/ricevute</button></a><br>
+        <a href="{% url 'scarica_listaScambi' %}"><button type="button" class="btn btn-warning" id="download-scambi-pdf-btn">Scarica lista Scambi .xlsx</button></a>
+    </div>
+    <hr>
+    <a id="eventi" class="menu-item"><p class="titoli-menu" style="float:left;">Eventi</p><img src="{% static 'images/plus.svg' %}" height="20px" width="20px" style="align-items: right;" id="plus-minus-icon-eventi"></a><br />
+    <div style="display: none; clear:both">
+        <a href="{% url 'create_evento' %}"><button type="button" class="btn btn-warning">Aggiunta Evento</button></a><br>
+        <a href="{% url 'show_eventi' %}"><button type="button" class="btn btn-warning">Vedi Eventi</button></a>
+    </div>
+    <hr>
+    <a id="cat" class="menu-item"><p class="titoli-menu" style="float:left;">Categorie di Scambi</p><img src="{% static 'images/plus.svg' %}" height="20px" width="20px" style="align-items: right;" id="plus-minus-icon-cat"></a><br />
+    <div style="display: none; clear:both">
+        <a href="{% url 'show_aree_categorie' %}"><button type="button" class="btn btn-warning">Vedi categorie</button></a>
+    </div>
+    <hr>
+    <a id="stat" class="menu-item"><p class="titoli-menu" style="float:left;">Statistiche</p><img src="{% static 'images/plus.svg' %}" height="20px" width="20px" style="align-items: right;" id="plus-minus-icon-stat"></a><br />
+    <div style="display: none; clear:both">
+        <a href="{% url 'statistiche' %}"><button type="button" class="btn btn-warning">Statistiche BDT</button></a>
+    </div>
+    <hr>
+    <a id="gestione" class="menu-item"><p class="titoli-menu" style="float:left;">Gestione BDT</p><img src="{% static 'images/plus.svg' %}" height="20px" width="20px" style="align-items: right;" id="plus-minus-icon-gestione"></a><br />
+    <div style="display: none; clear:both">
+        
+        <a href="{% url 'create_tesoriere' %}"><button type="button" class="btn btn-warning">Aggiunta tesoriere</button></a>
+        <a href="{% url 'show_tesorieri' %}"><button type="button" class="btn btn-warning">Vedi tesorieri</button></a>
+        {% if request.user.is_staff %}
+        <a href="{% url 'create_bdt' %}"><button type="button" class="btn btn-warning">Crea nuova BDT</button></a>
+        {% endif %}
+        <a href="{% url 'update_bdt' %}"><button type="button" class="btn btn-warning">Modifica BDT</button></a>
+        <a href="{% url 'delete_bdt' %}"><button type="button" class="btn btn-warning">Elimina BDT</button></a>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+$('#menu > #soci').click(function(){
+    $(this).next().next().slideToggle();
+    var icon_soci = $('#plus-minus-icon-soci');
+    if(icon_soci.attr('src') == "{% static 'images/plus.svg' %}") {
+        icon_soci.attr('src', '{% static "images/minus.svg" %}');
+    } else {
+        icon_soci.attr('src', '{% static "images/plus.svg" %}');
+    }
+});
+$('#menu > #scambi').click(function(){
+    $(this).next().next().slideToggle();
+    var icon_scambi = $('#plus-minus-icon-scambi');
+    if(icon_scambi.attr('src') == "{% static 'images/plus.svg' %}") {
+        icon_scambi.attr('src', '{% static "images/minus.svg" %}');
+    } else {
+        icon_scambi.attr('src', '{% static "images/plus.svg" %}');
+    }
+});
+$('#menu > #eventi').click(function(){
+    $(this).next().next().slideToggle();
+    var icon_eventi = $('#plus-minus-icon-eventi');
+    if(icon_eventi.attr('src') == "{% static 'images/plus.svg' %}") {
+        icon_eventi.attr('src', '{% static "images/minus.svg" %}');
+    } else {
+        icon_eventi.attr('src', '{% static "images/plus.svg" %}');
+    }
+});
+$('#menu > #cat').click(function(){
+    $(this).next().next().slideToggle();
+    var icon_cat = $('#plus-minus-icon-cat');
+    if(icon_cat.attr('src') == "{% static 'images/plus.svg' %}") {
+        icon_cat.attr('src', '{% static "images/minus.svg" %}');
+    } else {
+        icon_cat.attr('src', '{% static "images/plus.svg" %}');
+    }
+});
+$('#menu > #stat').click(function(){
+    $(this).next().next().slideToggle();
+    var icon_stat = $('#plus-minus-icon-stat');
+    if(icon_stat.attr('src') == "{% static 'images/plus.svg' %}") {
+        icon_stat.attr('src', '{% static "images/minus.svg" %}');
+    } else {
+        icon_stat.attr('src', '{% static "images/plus.svg" %}');
+    }
+});
+$('#menu > #gestione').click(function(){
+    $(this).next().next().slideToggle();
+    var icon_gestione = $('#plus-minus-icon-gestione');
+    if(icon_gestione.attr('src') == "{% static 'images/plus.svg' %}") {
+        icon_gestione.attr('src', '{% static "images/minus.svg" %}');
+    } else {
+        icon_gestione.attr('src', '{% static "images/plus.svg" %}');
+    }
+});
+</script>

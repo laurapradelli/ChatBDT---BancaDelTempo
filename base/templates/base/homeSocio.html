@@ -1,0 +1,228 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+{% load static %}
+
+<style>
+    .btn {
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }
+
+    .col {
+        margin-right: 3%;
+    }
+
+    .barra-caricamento {
+        width: 40%;
+        height: 20px;
+        border-radius: 15px;
+        background-color: #ff0404;
+        border: 1px solid #ffffff;
+        position: relative;
+        /* Posizione relativa per il contenitore */
+        overflow: hidden;
+    }
+
+    .riempimento {
+        border-radius: 15px;
+        background-color: #12d300;
+        height: 100%;
+        position: absolute;
+        /* Posizione assoluta per il riempimento */
+        top: 0;
+        left: 0;
+        /* Posiziona il riempimento al centro */
+    }
+
+    .colDati {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+</style>
+
+<script>
+    // Funzione JavaScript per aggiornare le barre di caricamento
+    function updateProgressBar(user_id, saldo_g) {
+        var saldo = parseInt(saldo_g)
+        if (saldo < -15) {
+            saldo = -15
+        }
+        if (saldo > 15) {
+            saldo = 15
+        }
+        saldo = saldo + 15
+        var val = (saldo * 10)/3
+        var barra = document.getElementById("progressBar_" + user_id)
+        barra.style.width = val + '%'
+    }
+</script>
+
+
+
+{% include 'base/navbar.html' %}
+<br>
+<p style="font-size: 30px; font-weight: 600;">Ciao {{request.user.nome}}!</p>
+{% if request.user.tesoriere %}
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p style="font-size:25px; font-weight: 600;">I soci della tua BDT {{request.user.bdt}}</p>
+        <br>
+        {% for utente, saldo in saldi.items %}
+        {% if not utente.tesoriere %}
+        <div>
+            <a style="color:black; float:left; font-size: 18px;" href="{% url 'tes_profilo_socio' utente.id %}">
+                <p >{{utente}}</p>
+            </a>
+            <p style="margin-right: 10%;font-size: 18px;">:  {{saldo}} ore</p>
+        </div>
+
+        <div class="barra-caricamento">
+            <div id="progressBar_{{utente.id}}" class="riempimento" style="width: 10%"></div>
+
+            <script>
+                updateProgressBar('{{utente.id}}', '{{saldo}}')
+            </script>
+        
+
+        </div>
+        <p style="float:left">-15h</p>
+        <p style="margin-left:13%;position:absolute;float:left">0h</p>
+        <p style="margin-left:36%;position:relative">+15h</p>
+
+
+
+        <hr style="clear:both">
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+
+    {% else %}
+    <div style="clear:both; ">
+        <div class="colDati">
+            <div style="margin-right:10%;">
+                <p><b>Data di nascita:</b> {{request.user.nascita}}</p>
+                <p><b>Residenza:</b> {{request.user.residenza}}</p>
+                <p><b>Codice Fiscale:</b> {{request.user.cf}}</p>
+            </div>
+            <div>
+                <p><b>Telefono:</b> {{request.user.telefono}}</p>
+                <p><b>Email:</b> {{request.user.email}}</p>
+                <p><b>Quota:</b> 
+                    {% if request.user.quota %} 
+                    Pagata
+                    {% else %}
+                    Non Pagata
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        
+        <a href="{% url 'show_aree_categorie' %}"><button type="button" class="btn btn-warning" style="margin-right:20px">Vedi
+            categorie scambi della tua BDT</button></a>
+        <a href="{% url 'info_soci' %}"><button type="button" class="btn btn-warning" >Vedi i
+            soci della tua BDT</button></a>
+        <br><br>
+        <table class="sortable" style="max-width: 80%;">
+            <thead>
+            <tr>
+                <th onclick="sortTable(0)">Data <img src="{% static 'images/arrows.svg' %}" width="25px"
+                    height="25px" alt=""></th>
+                <th onclick="sortTable(1)">Donatore <img src="{% static 'images/arrows.svg' %}" width="25px"
+                    height="25px" alt=""></th>
+                <th onclick="sortTable(2)">Ricevente <img src="{% static 'images/arrows.svg' %}" width="25px"
+                    height="25px" alt=""></th>
+                <th onclick="sortTable(3)">Durata <img src="{% static 'images/arrows.svg' %}" width="25px"
+                    height="25px" alt=""></th>
+                <th onclick="sortTable(4)">Maxi Categoria <img src="{% static 'images/arrows.svg' %}" width="25px"
+                    height="25px" alt=""></th>
+                <th>Categoria</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for scambio in scambi %}
+            <tr>
+                <td>{{scambio.data}}</td>
+                <td>
+                    {% for donatore in scambio.donatori.all %}
+                    {{donatore}}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for ricevente in scambio.riceventi.all %}
+                    {{ricevente}}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{scambio.durata}}</td>
+                <td>{{scambio.area|default:''}}</td>
+                <td>{{scambio.categoria|default:''}}</td>
+                <td>{{scambio.note}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+        <br>
+        {% endif %}
+    </div>
+
+<script>
+    function parseDate(dateString) {
+        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+        const dateParts = dateString.split(' ');
+        const day = parseInt(dateParts[0], 10);
+        const month = monthNames.indexOf(dateParts[1]) + 1;
+        const year = parseInt(dateParts[2], 10);
+        // Restituisce un oggetto Date valido
+        return new Date(year, month - 1, day);
+    }
+    
+    function sortTable(columnIndex) {
+    const table = document.querySelector('.sortable tbody');
+    const rows = Array.from(table.rows);
+    const header = table.parentNode.querySelector('thead th:nth-child(' + (columnIndex + 1) + ')');
+    const isDateColumn = header.innerText.trim().toLowerCase() === 'data';
+    
+    rows.sort((a, b) => {
+        let cellA = a.cells[columnIndex].innerText.trim();
+        let cellB = b.cells[columnIndex].innerText.trim();
+        
+        if (isDateColumn) {
+            cellA = parseDate(cellA);
+            cellB = parseDate(cellB);
+            return cellA - cellB;
+        } else {
+            return cellA.localeCompare(cellB);
+        }
+    });
+    
+    // Alterna l'ordine se la colonna è già ordinata
+    if (header.classList.contains('sorted-asc')) {
+        rows.reverse();
+        header.classList.remove('sorted-asc');
+        header.classList.add('sorted-desc');
+    } else {
+        header.classList.remove('sorted-desc');
+        header.classList.add('sorted-asc');
+    }
+    
+    // Rimuove le classi di ordinamento dagli altri header
+    Array.from(header.parentNode.children).forEach(th => {
+        if (th !== header) {
+            th.classList.remove('sorted-asc', 'sorted-desc');
+        }
+    });
+    
+    // Ricrea la tbody con le righe ordinate
+    while (table.firstChild) {
+        table.removeChild(table.firstChild);
+    }
+    table.append(...rows);
+}
+</script>
+
+{% endblock %}

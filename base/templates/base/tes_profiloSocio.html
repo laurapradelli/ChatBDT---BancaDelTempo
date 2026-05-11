@@ -1,0 +1,332 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+{% load static %}
+
+<style>
+    .colDati {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+</style>
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        {% if user.tesoriere %}
+        <p class="titoli-pagine">Sig. Banca del Tempo</p>
+        <p><b>Saldo:</b> {{saldo}}</p>
+        <p><b>Tesoretto:</b> {{tesoretto}}</p>
+        <br>
+        <p>Scambi del Sig. Banca del Tempo</p>
+        <table class="sortableTesS">
+            <thead>
+                <tr>
+                    <th onclick="sortTableTesS(0)">Data <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTableTesS(1)">Donatore <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTableTesS(2)">Ricevente <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTableTesS(3)">Durata <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTableTesS(4)">Categoria 1° livello <img src="{% static 'images/arrows.svg' %}"
+                            width="25px" height="25px" alt=""></th>
+                    <th>Sottocategoria</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scambio in scambi_sig %}
+                <tr>
+                    <td>{{scambio.data}}</td>
+                    <td>
+                        {% for donatore in scambio.donatori.all %}
+                        <a href="{% url 'tes_profilo_socio' donatore.id %}" style="color:black">{{donatore}}{% if not forloop.last %}, {% endif %}</a>
+
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for ricevente in scambio.riceventi.all %}
+                        <a href="{% url 'tes_profilo_socio' ricevente.id %}" style="color:black">{{ricevente}}{% if not forloop.last %}, {% endif %}</a>
+
+                        {% endfor %}
+                    </td>
+                    <td>{{scambio.durata}}</td>
+                    <td>{{scambio.area|default:''}}</td>
+                    <td>{{scambio.categoria|default:''}}</td>
+                    <td>{{scambio.note}}</td>
+                    <td><a href="{% url 'update_scambio' scambio.id %}"><img src="{% static 'images/pencil.svg' %}"
+                        style="height:30px; width:30px;" alt="Modifica scambio"></a></td>
+                    <td><a href="{% url 'delete_scambio' scambio.id %}"><img src="{% static 'images/trash.svg' %}"
+                        style="height:30px; width:30px;" alt="Elimina scambio"></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <p>Scambi che hanno generato tesoretto</p>
+        <table class="sortableTesT">
+            <thead>
+                <tr>
+                    <th onclick="sortTableTesT(0)">Data <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTableTesT(1)">Donatori <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTableTesT(2)">Riceventi <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTableTesT(3)">Durata <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTableTesT(4)">Categoria di 1° livello <img src="{% static 'images/arrows.svg' %}"
+                            width="25px" height="25px" alt=""></th>
+                    <th>Sottocategoria</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scambio in scambi_tes %}
+                <tr>
+                    <td>{{scambio.data}}</td>
+                    <td>
+                        {% if scambio.donatori.all %}
+                        {% for donatore in scambio.donatori.all %}
+                        <a href="{% url 'tes_profilo_socio' donatore.id %}" style="color:black">{{donatore}}{% if not forloop.last %}, {% endif %}</a>
+                        {% endfor %}
+                        {% else %}
+                        Socio eliminato
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if scambio.riceventi.all %}
+                        {% for ricevente in scambio.riceventi.all %}
+                        <a href="{% url 'tes_profilo_socio' ricevente.id %}" style="color:black">{{ricevente}}{% if not forloop.last %}, {% endif %}</a>
+                        {% endfor %}
+                        {% else %}
+                        Socio eliminato
+                        {% endif %}
+                    </td>
+                    <td>{{scambio.durata}}</td>
+                    <td>{{scambio.area|default:''}}</td>
+                    <td>{{scambio.categoria|default:''}}</td>
+                    <td>{{scambio.note}}</td>
+                    <td><a href="{% url 'update_scambio' scambio.id %}"><img src="{% static 'images/pencil.svg' %}"
+                                style="height:30px; width:30px;" alt="Modifica scambio"></a></td>
+                    <td><a href="{% url 'delete_scambio' scambio.id %}"><img src="{% static 'images/trash.svg' %}"
+                                style="height:30px; width:30px;" alt="Elimina scambio"></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+        <p class="titoli-pagine" style="margin-bottom: 2%;">{{user.nome}} {{user.cognome}} <a
+                href="{% url 'update_socio' user.id %}"><img src="{% static 'images/pencil.svg' %}" alt="Modifica socio"
+                    width="30px" height="30px"></a>
+            <a href="{% url 'delete_socio' user.id %}"><img src="{% static 'images/trash.svg' %}" alt="Elimina socio"
+                    width="30px" height="30px"></a>
+        </p>
+        <div class="colDati">
+            <p><b>Data di nascita:</b> {{user.nascita}}</p>
+            <p><b>Residenza:</b> {{user.residenza}}</p>
+            <p><b>CF:</b> {{user.cf}}</p>
+            <p><b>Telefono:</b> {{user.telefono}}</p>
+            <p><b>Email:</b> {{user.email}}</p>
+            <p><b>Quota:</b> {% if user.quota %} Pagata {% else %} Non Pagata {% endif %}</p>
+            <p><b>Saldo:</b> {{saldo}}</p>
+            <p><b>Preferiti:</b>{% for area in user.propensione.all %}
+                {{area.nome}}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            <p><b>Attivo:</b>
+                {% if attivo %}
+                Si
+                {% else %}
+                No
+                {% endif %}
+            </p>
+            <p><b>Ultimo scambio: </b>{{ultimo}}</p>
+        </div>
+
+        <br>
+        <p>Gli scambi di {{user}} dove è <b>donatore</b>:</p>
+        <table class="sortableD">
+            <thead>
+            <tr>
+                <th onclick="sortTableD(0)">Data <img src="{% static 'images/arrows.svg' %}" width="25px" height="25px"
+                        alt=""></th>
+                <th onclick="sortTableD(1)">Donatore <img src="{% static 'images/arrows.svg' %}" width="25px"
+                        height="25px" alt=""></th>
+                <th onclick="sortTableD(2)">Ricevente <img src="{% static 'images/arrows.svg' %}" width="25px"
+                        height="25px" alt=""></th>
+                <th onclick="sortTableD(3)">Durata <img src="{% static 'images/arrows.svg' %}" width="25px"
+                        height="25px" alt=""></th>
+                <th onclick="sortTableD(4)">Categoria 1° livello <img src="{% static 'images/arrows.svg' %}"
+                        width="25px" height="25px" alt=""></th>
+                <th>Sottocategoria</th>
+                <th>Note</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for scambio in scambi_d %}
+                <tr>
+                    <td>{{scambio.data}}</td>
+                    <td>
+                        {% if scambio.donatori.all %}
+                        {% for donatore in scambio.donatori.all %}
+                        <a href="{% url 'tes_profilo_socio' donatore.id %}" style="color:black">{{donatore}}{% if not forloop.last %}, {% endif %}</a>
+                        {% endfor %}
+                        {% else %}
+                        Socio eliminato
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if scambio.donatori.all %}
+                        {% for ricevente in scambio.riceventi.all %}
+                        <a href="{% url 'tes_profilo_socio' ricevente.id %}" style="color:black">{{ricevente}}{% if not forloop.last %}, {% endif %}</a>
+                        {% endfor %}
+                        {% else %}
+                        Socio eliminato
+                        {% endif %}
+                    </td>
+                    <td>{{scambio.durata}}</td>
+                    <td>{{scambio.area|default:''}}</td>
+                    <td>{{scambio.categoria|default:''}}</td>
+                    <td>{{scambio.note}}</td>
+                    <td><a href="{% url 'update_scambio' scambio.id %}"><img src="{% static 'images/pencil.svg' %}"
+                                style="height:30px; width:30px;" alt="Modifica scambio"></a></td>
+                    <td><a href="{% url 'delete_scambio' scambio.id %}"><img src="{% static 'images/trash.svg' %}"
+                                style="height:30px; width:30px;" alt="Elimina scambio"></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+        <p>Gli scambi di {{user}} dove è <b>ricevente</b>:</p>
+        <table class="sortable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Data <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTable(1)">Donatore <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTable(2)">Ricevente <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTable(3)">Durata <img src="{% static 'images/arrows.svg' %}" width="25px"
+                            height="25px" alt=""></th>
+                    <th onclick="sortTable(4)">Categoria 1° livello <img src="{% static 'images/arrows.svg' %}"
+                            width="25px" height="25px" alt=""></th>
+                    <th>Sottocategoria</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scambio in scambi_r %}
+                <tr>
+                    <td>{{scambio.data}}</td>
+                    <td>
+                        {% if scambio.donatori.all %}
+                        {% for donatore in scambio.donatori.all %}
+                        <a href="{% url 'tes_profilo_socio' donatore.id %}" style="color:black">{{donatore}}{% if not forloop.last %}, {% endif %}</a>
+                        {% endfor %}
+                        {% else %}
+                        Socio eliminato
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if scambio.riceventi.all %}
+                        {% for ricevente in scambio.riceventi.all %}
+                        <a href="{% url 'tes_profilo_socio' ricevente.id %}" style="color:black">{{ricevente}}{% if not forloop.last %}, {% endif %}</a>
+                        {% endfor %}
+                        {% else %}
+                        Socio eliminato
+                        {% endif %}
+                    </td>
+                    <td>{{scambio.durata}}</td>
+                    <td>{{scambio.area|default:''}}</td>
+                    <td>{{scambio.categoria|default:''}}</td>
+                    <td>{{scambio.note}}</td>
+                    <td><a href="{% url 'update_scambio' scambio.id %}"><img src="{% static 'images/pencil.svg' %}"
+                                style="height:30px; width:30px;" alt="Modifica scambio"></a></td>
+                    <td><a href="{% url 'delete_scambio' scambio.id %}"><img src="{% static 'images/trash.svg' %}"
+                                style="height:30px; width:30px;" alt="Elimina scambio"></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function parseDate(dateString) {
+        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+        const dateParts = dateString.split(' ');
+        const day = parseInt(dateParts[0], 10);
+        const month = monthNames.indexOf(dateParts[1]);
+        const year = parseInt(dateParts[2], 10);
+
+        if (month === -1 || isNaN(day) || isNaN(year)) {
+            return null;
+        }
+
+        return new Date(year, month, day);
+    }
+
+    function sortTable(tableClass, columnIndex) {
+        const table = document.querySelector(`.${tableClass} tbody`);
+        const rows = Array.from(table.rows);
+        const header = table.parentNode.querySelector(`thead th:nth-child(${columnIndex + 1})`);
+        const isDateColumn = header.innerText.toLowerCase().includes('data');
+
+        rows.sort((a, b) => {
+            let cellA = a.cells[columnIndex].innerText.trim();
+            let cellB = b.cells[columnIndex].innerText.trim();
+
+            if (isDateColumn) {
+                cellA = parseDate(cellA);
+                cellB = parseDate(cellB);
+                return cellA - cellB;
+            } else {
+                return cellA.localeCompare(cellB);
+            }
+        });
+
+        if (header.classList.contains('sorted-asc')) {
+            rows.reverse();
+            header.classList.remove('sorted-asc');
+            header.classList.add('sorted-desc');
+        } else {
+            header.classList.remove('sorted-desc');
+            header.classList.add('sorted-asc');
+        }
+
+        Array.from(header.parentNode.children).forEach(th => {
+            if (th !== header) {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+            }
+        });
+
+        while (table.firstChild) {
+            table.removeChild(table.firstChild);
+        }
+        table.append(...rows);
+    }
+
+    document.querySelectorAll('.sortable th').forEach((header, index) => {
+        header.addEventListener('click', () => sortTable('sortable', index));
+    });
+
+    document.querySelectorAll('.sortableD th').forEach((header, index) => {
+        header.addEventListener('click', () => sortTable('sortableD', index));
+    });
+
+    document.querySelectorAll('.sortableTesS th').forEach((header, index) => {
+        header.addEventListener('click', () => sortTable('sortableTesS', index));
+    });
+
+    document.querySelectorAll('.sortableTesT th').forEach((header, index) => {
+        header.addEventListener('click', () => sortTable('sortableTesT', index));
+});
+</script>
+{% endblock %}

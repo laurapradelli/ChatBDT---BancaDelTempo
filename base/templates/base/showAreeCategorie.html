@@ -1,0 +1,83 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+{% load static %}
+
+{% if request.user.tesoriere %}
+<div class="home-container" id="area">
+   {% include 'base/menuLaterale.html' %}
+   <div class="col">
+      <p class="titoli-pagine">Categorie di 1° livello e sottocategorie</p>
+      {% if request.user.tesoriere %}
+      <a href="{% url 'create_area' %}"><button type="button" class="btn btn-warning btn-sm"
+            style="float:left; margin-right: 1%;">Aggiungi Categoria di 1° livello</button></a>
+      <a href="{% url 'create_categoria' %}"><button type="button" class="btn btn-warning btn-sm"
+            style="float:left">Aggiungi Sottocategoria</button></a>
+      <br>
+      {% endif %}
+      <br><br>
+      {% for area in aree %}
+      <div style="float: left; margin-right: 10px;"><b>{{area.nome}}</b></div>
+      <div style="float:right; margin-right: 30%">
+         {% if request.user.tesoriere %}
+         <a href="{% url 'update_area' area.id  %}"><img src="{% static 'images/pencil.svg' %}"
+               style="height:30px; width:30px;" alt="Modifica scambio"></a>
+         <a href="{% url 'delete_area' area.id %}"><img src="{% static 'images/trash.svg' %}"
+               style="height:30px; width:30px;" alt="Elimina scambio"></a>
+         {% endif %}
+      </div>
+
+      <div style="clear: both;"></div>
+      <ul>
+         {% for categoria in categorie %}
+         {% if categoria.area == area %}
+         <li style="float:left;">
+            <div style="float: left; margin-right: 10px; font-size: 15px;">{{categoria.nome}}</div>
+         </li>
+         {% if request.user.tesoriere %}
+         <a href="{% url 'update_categoria' categoria.id  %}"><img src="{% static 'images/pencil.svg' %}"
+               style="height:30px; width:30px;" alt="Modifica scambio"></a>
+         <a href="{% url 'delete_categoria' categoria.id %}"><img src="{% static 'images/trash.svg' %}"
+               style="height:30px; width:30px;" alt="Elimina scambio"></a>
+         {% endif %}
+         <br>
+         {% endif %}
+         {% endfor %}
+      </ul>
+      <hr width="70%">
+      {% endfor %}
+   </div>
+</div>
+{% else %}
+<br>
+<p class="titoli-pagine">Categorie di 1° livello e sottocategorie</p>
+<div style="width:100%; padding-left: 30%; padding-right:30%;">
+   
+   {% for area in aree %}
+   <div style="float: left; margin-right: 10px;"><b>{{area.nome}}</b></div>
+
+   <div style="clear: both;"></div>
+   <ul>
+      {% for categoria in categorie %}
+      {% if categoria.area == area %}
+      <li style="float:left;">
+         <div style="float: left; margin-right: 10px;">{{categoria.nome}}</div>
+      </li>
+      <br>
+      {% endif %}
+      {% endfor %}
+   </ul>
+   <hr width="100%">
+   {% endfor %}
+</div>
+{% endif %}
+
+<script type="text/javascript">
+   $('#area > a').click(function () {
+      $(this).next().next().slideToggle();
+      return false;
+   });
+</script>
+
+{% endblock %}

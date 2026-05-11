@@ -1,0 +1,5 @@
+
+{% for socio in soci %}
+    <p><a href="{% url 'tes_profilo_socio' socio.id %}">{{ socio }}</a></p>
+{% endfor %}
+

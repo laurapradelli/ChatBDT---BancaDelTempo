@@ -1,0 +1,32 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p class="titoli-pagine">Aggiorna Categoria</p>
+        <br>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div>
+                <label     style="margin-bottom: 1%;"     for="nome"><b>Categoria di 1° livello: </b></label>
+                {{form.nome}}
+            </div>
+            {% if mess > 0 %}
+            {% if messages %}
+            {% for message in messages %}
+                {{message}}
+                {% endfor %}
+            {% endif %}
+            {% endif %}
+            <br>
+            <button type="submit" type="button" class="btn btn-success">Salva</button>
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock %}

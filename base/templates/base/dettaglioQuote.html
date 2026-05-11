@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p class="titoli-pagine">Approfondimento pagamento Quote di {{user}}</p>
+        <br>
+        <table>
+            <thead>
+                <th>Anno</th>
+                <th>Stato</th>
+            </thead>
+            <tbody>
+                {% for anno, pag in lista_anni.items %}
+                <tr>
+                    <td>{{anno}}</td>
+                    <td>{{pag}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock content %}

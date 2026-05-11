@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+{% include 'base/navbar.html' %}
+<br>
+<p class="titoli-pagine">Gli utenti della banca del tempo {{bdt}}</p>
+<br>
+<table>
+    <tr>
+        <th>Cognome</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Telefono</th>
+        <th>Residenza</th>
+        <th>Categorie preferite</th>
+    </tr>
+    {% for user in users %}
+    {% if user != request.user %}
+    {% if not user.tesoriere %}
+    <tr>
+        <td>{{user.cognome}}</td>
+        <td>{{user.nome}}</td>
+        <td>{{user.email}}</td>
+        <td>{{user.telefono}}</td>
+        <td>{{user.residenza}}</td>
+        <td>
+        {% for pref in user.propensione.all %}
+        {{pref}}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+        </td>
+    </tr>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+</table>
+{% endblock %}

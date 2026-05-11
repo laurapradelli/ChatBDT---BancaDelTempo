@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+<br>
+<p class="titoli-pagine">Creazione di un nuovo socio per la bdt {{user.bdt}}</p>
+<style>
+    .categorie {
+        display: none;
+    }
+</style>
+<form id="categoriaForm" method="post" action="{% url 'create_socio_categorie' new_user.id %}">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th>Nome Categoria</th>
+        </tr>
+    {% for area in aree %}
+        <tr>
+            <td>{{area.nome}}</td>
+            <td><input type="checkbox" name="area_selezionata" value="{{ area.id }}"></td>
+        </tr> 
+    {% endfor %}
+    </table>
+    <br>
+    <button type="submit" class="btn btn-success">Salva</button>
+</form>
+
+{% endblock %}

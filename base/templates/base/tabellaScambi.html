@@ -1,0 +1,110 @@
+{% load static %}
+<table id="tabellaScambi" class="sortable">
+    <thead id="colData">
+        <tr>
+            <th onclick="sortTable(0)">Data <img src="{% static 'images/arrows.svg' %}" width="25px" height="25px" alt=""></th>
+            <th onclick="sortTable(1)">Donatore <img src="{% static 'images/arrows.svg' %}" width="25px" height="25px" alt=""></th>
+            <th onclick="sortTable(2)">Ricevente <img src="{% static 'images/arrows.svg' %}" width="25px" height="25px" alt=""></th>
+            <th onclick="sortTable(3)">Durata <img src="{% static 'images/arrows.svg' %}" width="25px" height="25px" alt=""></th>
+            <th onclick="sortTable(4)">Categoria 1° livello <img src="{% static 'images/arrows.svg' %}" width="25px" height="25px" alt=""></th>
+            <th>Sottocategoria</th>
+            <th>Note</th>
+        </tr>
+    </thead>
+    <tbody id="lista-scambi">
+        {% for scambio in scambi %}
+        <tr>
+            <td>{{scambio.data}}</td>
+            <td>
+                {% if scambio.donatori.all %}
+                {% for donatore in scambio.donatori.all %}
+                <a style="color:black;" href="{% url 'tes_profilo_socio' donatore.id %}">{{donatore}}</a>{% if not forloop.last %},
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                Socio eliminato
+                {% endif %}
+            </td>
+            <td>
+                {% if scambio.riceventi.all %}
+                {% for ricevente in scambio.riceventi.all %}
+                <a style="color:black;" href="{% url 'tes_profilo_socio' ricevente.id %}">{{ricevente}}</a>{% if not forloop.last %},
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                Socio eliminato
+                {% endif %}
+            </td>
+            <td>{{scambio.durata}}</td>
+            {% if scambio.area == None %}
+            <td> </td>
+            {% else %}
+            <td>{{scambio.area}}</td>
+            {% endif %}
+            {% if scambio.categoria == None %}
+            <td> </td>
+            {% else %}
+            <td>{{scambio.categoria}}</td>
+            {% endif %}
+            <td>{{scambio.note}}</td>
+            <td><a href="{% url 'update_scambio' scambio.id %}"><img src="{% static 'images/pencil.svg' %}" style="height:30px; width:30px;" alt="Modifica scambio"></a></td>
+            <td><a href="{% url 'delete_scambio' scambio.id %}"><img src="{% static 'images/trash.svg' %}" style="height:30px; width:30px;" alt="Elimina scambio"></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    function parseDate(dateString) {
+        const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+        const dateParts = dateString.split(' ');
+        const day = parseInt(dateParts[0], 10);
+        const month = monthNames.indexOf(dateParts[1]) + 1;
+        const year = parseInt(dateParts[2], 10);
+        // Restituisce un oggetto Date valido
+        return new Date(year, month - 1, day);
+    }
+    
+    function sortTable(columnIndex) {
+    const table = document.querySelector('.sortable tbody');
+    const rows = Array.from(table.rows);
+    const header = table.parentNode.querySelector('thead th:nth-child(' + (columnIndex + 1) + ')');
+    const isDateColumn = header.innerText.trim().toLowerCase() === 'data';
+    
+    rows.sort((a, b) => {
+        let cellA = a.cells[columnIndex].innerText.trim();
+        let cellB = b.cells[columnIndex].innerText.trim();
+        
+        if (isDateColumn) {
+            cellA = parseDate(cellA);
+            cellB = parseDate(cellB);
+            return cellA - cellB;
+        } else {
+            return cellA.localeCompare(cellB);
+        }
+    });
+    
+    // Alterna l'ordine se la colonna è già ordinata
+    if (header.classList.contains('sorted-asc')) {
+        rows.reverse();
+        header.classList.remove('sorted-asc');
+        header.classList.add('sorted-desc');
+    } else {
+        header.classList.remove('sorted-desc');
+        header.classList.add('sorted-asc');
+    }
+    
+    // Rimuove le classi di ordinamento dagli altri header
+    Array.from(header.parentNode.children).forEach(th => {
+        if (th !== header) {
+            th.classList.remove('sorted-asc', 'sorted-desc');
+        }
+    });
+    
+    // Ricrea la tbody con le righe ordinate
+    while (table.firstChild) {
+        table.removeChild(table.firstChild);
+    }
+    table.append(...rows);
+}
+</script>

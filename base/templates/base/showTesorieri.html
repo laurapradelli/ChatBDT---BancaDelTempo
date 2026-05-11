@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+
+{% load static %}
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p class="titoli-pagine" style="float:left">Tesorieri della BDT {{bdt}}</p>
+        <a href="{% url 'create_tesoriere' %}"><button type="button" class="btn btn-warning" style="margin-left: 3%;">Aggiunta tesoriere</button></a>
+        <table style="clear:both">
+            <thead>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Email</th>
+            </thead>
+            <tbody>
+                {% for tes in tesorieri %}
+                {% if tes != request.user %}
+                <tr>
+                    <td>{{tes.nome}}</td>
+                    <td>{{tes.cognome}}</td>
+                    <td>{{tes.email}}</td>
+                    <td><a href="{% url 'update_tesoriere' tes.id %}"><img src="{% static 'images/pencil.svg' %}" style="height:30px; width:30px;" alt="Modifica tesoriere"></a></td>
+                    <td><a href="{% url 'delete_tesoriere' tes.id %}"><img src="{% static 'images/trash.svg' %}" style="height:30px; width:30px;" alt="Elimina tesoriere"></a></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock content %}

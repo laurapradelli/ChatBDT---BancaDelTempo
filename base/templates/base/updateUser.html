@@ -1,0 +1,187 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+
+{% if request.user.tesoriere %}
+<div class="home-container">
+  {% include 'base/menuLaterale.html' %}
+  <div class="col">
+    <p class="titoli-pagine">Modifica Socio</p>
+    <br>
+    <form class="responsive-form" action="" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group col-md-4">
+
+          <label for="nome"><b>Nome: </b></label>
+          <br>
+          {{form.nome}}
+          <br>
+          <br>
+
+
+          <label for="cognome"><b>Cognome: </b></label>
+          <br>
+          {{form.cognome}}
+          <br>
+          <br>
+
+
+          <label for="nascita"><b>Data di Nascita: </b></label>
+          <br>
+          {{form.nascita}}
+        </div>
+        <div class="form-group col-md-4">
+          <label for="residenza"><b>Residenza: </b></label>
+          <br>
+          {{form.residenza}}
+          <br>
+          <br>
+
+
+          <label for="cf"><b>Codice Fiscale: </b></label>
+          <br>
+          {{form.cf}}
+          <br>
+          <br>
+
+
+          <label for="telefono"><b>Telefono: </b></label>
+          <br>
+          {{form.telefono}}
+        </div>
+        <div class="form-group col-md-4">
+          <label for="email"><b>Email: </b></label>
+          <br>
+          {{form.email}}
+          <br>
+          <br>
+
+
+          <label for="quota"><b>Pagamento quota: </b></label>
+          <br>
+          {{form.quota}}
+          <br>
+          <br>
+
+          <label for="ore_iniz"><b>Ore iniziali: </b></label>
+          <br>
+          {{form.ore_iniz}}
+        </div>
+
+      </div>
+
+      {% if mess != 0 %}
+            {% if messages %}
+                {% for message in messages %}
+                    {{message}}
+                {% endfor %}
+            {% endif %}
+            {% endif %}
+      <br>
+      <div class="form__action">
+        <a href="{% url 'create_socio_categorie' user.id %}"><button type="button" class="btn btn-info">Modifica
+            preferenze</button></a>
+        <button type="submit" type="button" class="btn btn-success">Salva</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% else %}
+<p style="font-size: 30px;font-weight: 600;">Modifica Socio</p>
+<form class="responsive-form" action="" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="form-row">
+    <div class="form-group col-md-4">
+      <label for="nome">Nome: </label>
+      <br>
+      {{form.nome}}
+      <br>
+      <br>
+
+      <label for="cognome">Cognome: </label>
+      <br>
+      {{form.cognome}}
+      <br>
+      <br>
+
+      <label for="nascita">Data di Nascita: </label>
+      <br>
+      {{form.nascita}}
+      <br>
+      <br>
+    </div>
+    <div class="form-group col-md-4">
+      <label for="residenza">Residenza: </label>
+      <br>
+      {{form.residenza}}
+      <br>
+      <br>
+
+      <label for="cf">Codice Fiscale: </label>
+      <br>
+      {{form.cf}}
+      <br>
+      <br>
+
+      <label for="telefono">Telefono: </label>
+      <br>
+      {{form.telefono}}
+    </div>
+    <div   class="form-group col-md-4" style="padding-right: 20%;">
+      <label for="email">Email: </label>
+      <br>
+      {{form.email}}
+      <br>
+      <br>
+      <div style=" width: 20%; height: 40%;"></div>
+    
+
+      {% if messages %}
+      {% for message in messages %}
+      {{message}}
+      {% endfor %}
+      {% endif %}
+      
+
+      <div >
+        <button style="margin-left: 35%;"        type="submit" class="btn btn-success">Salva</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+
+
+
+
+{% endif %}
+
+
+<style>
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .form-group {
+    border-color: white;
+    flex: 1;
+    min-width: 200px;
+    /* Ensure columns don't get too narrow */
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .form-group {
+      flex-basis: 100%;
+      /* Make each column take full width */
+    }
+  }
+</style>
+
+
+{% endblock %}

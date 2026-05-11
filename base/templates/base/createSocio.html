@@ -1,0 +1,92 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p class="titoli-pagine">Creazione di un nuovo socio per la BDT {{user.bdt}}</p>
+        <p>* campi obbligatori</p>
+        <form class="responsive-form" method="POST" action="">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="nome"><b>Nome: *</b></label>
+                    <br>
+                    {{form.nome}}
+                    <br><br>
+                    <label for="cognome"><b>Cognome: *</b></label>
+                    <br>
+                    {{form.cognome}}
+                    <br><br>
+                    <label for="nascita"><b>Data di nascita: </b></label>
+                    <br>
+                    {{form.nascita}}
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="residenza"><b>Residenza: </b></label>
+                    <br>
+                    {{form.residenza}}
+                    <br><br>
+                    <label for="cf"><b>Codice Fiscale: *</b></label>
+                    <br>
+                    {{form.cf}}
+                    <br><br>
+                    <label for="telefono"><b>Telefono: </b></label>
+                    <br>
+                    {{form.telefono}}
+                    
+                </div>
+                <div class="form-group col-md-4">
+                    
+                    <label for="email"><b>Email: *</b></label>
+                    <br>
+                    {{form.email}}
+                    <br><br>
+                    <label for="quota"><b>Pagamento quota: </b></label>
+                    <br>
+                    {{form.quota}}
+                    <br><br>
+                    <label for="quota"><b>Ore iniziali: </b></label>
+                    <br>
+                    {{form.ore_iniz}}
+                    
+                </div>
+            </div>
+            <br>
+            {% if mess != 0 %}
+            {% if messages %}
+                {% for message in messages %}
+                    {{message}}
+                {% endfor %}
+            {% endif %}
+            {% endif %}
+            
+            <button type="submit" class="btn btn-success">Avanti</button>
+            
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .form-group {
+        border-color: white;
+        flex: 1;
+        min-width: 200px; /* Ensure columns don't get too narrow */
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .form-group {
+            flex-basis: 100%; /* Make each column take full width */
+        }
+    }
+</style>
+
+{% endblock %}

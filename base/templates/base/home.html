@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Reddit+Sans:ital,wght@0,200..900;1,200..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+</head>
+<br><br>
+<p style="font-family: poppins; text-align: center; font-size: 45px; margin-bottom: 10px; font-weight:600"> Benvenuto su
+    ChatBDT!</p>
+<p style="font-family: poppins; text-align: center; font-size: 17px; margin-bottom: 15px; margin-left:30%; margin-right:30%">La Banca del
+    Tempo è un sistema in cui le persone scambiano reciprocamente attività, servizi e saperi.<br> Questa associazione
+    propone di dare valore e organizzazione a ciò che esiste nella comunità come
+    forma di auto aiuto tra le persone.</p>
+<div style="display: flex; justify-content: center;">
+    <a href="{% url 'login' %}"><button type="button" class="btn btn-warning">Accedi</button></a>
+</div>
+
+<br />
+<br />
+<br />
+<div class="container">
+    <div class="row">
+        <p style="font-size: 20px;margin-left:8%;">Gli ultimi eventi delle nostre BDT:</p>
+        <div class="eventi">
+            {% for evento in eventi %}
+            <div class="card" style="width: 18rem;">
+                <img src="{{evento.foto.url}}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <p class="card-text">{{evento.bdt}}</p>
+                    <h5 class="card-title">{{evento.titolo}}</h5>
+                    <p class="card-text">{{evento.descrizione}}</p>
+                    <p class="card-text">{{evento.data_ora}}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .eventi {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+        gap: 1rem;
+        padding-left: 9%;
+        justify-content: center;
+        height: auto;
+    }
+
+    .card {
+        text-align: center;
+        margin: 1rem 0; /* Aggiunge spazio verticale tra le card */
+        /*height: auto;*/
+        height: auto;
+    }
+
+    .card img {
+        width: 100%;
+        height: auto;
+    }
+
+    @media (max-width: 768px) {
+        .eventi {
+            grid-template-columns: 1fr; /* Dispone le card in una colonna */
+            padding-left: 0; /* Rimuove il padding a sinistra per schermi piccoli */
+        }
+    }
+</style>
+
+{% endblock content %}

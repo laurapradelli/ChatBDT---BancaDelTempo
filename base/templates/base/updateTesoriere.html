@@ -1,0 +1,43 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p class="titoli-pagine">Modifica tesoriere</p>
+        <br>
+        <form method="POST">
+            {% csrf_token %}
+            <label      for="nome"><b>Nome: </b></label>
+            <br>
+           
+            {{form.nome}}
+            <br>
+            <br>
+            
+            <label for="cognome"><b>Cognome: </b></label>
+            <br>
+            {{form.cognome}}
+            <br>
+            <br>
+          
+            <label for="email"><b>Email: </b></label>
+            <br>
+            {{form.email}} 
+             
+            <br>
+            <br>
+            {% if mess > 0 %}
+            {% if messages %}
+                {% for message in messages %}
+                    {{message}}
+                {% endfor %}
+            {% endif %}  
+            {% endif %} 
+            <button style="margin-left: 6%;" type="submit" type="button" class="btn btn-success">Salva</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

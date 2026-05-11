@@ -1,0 +1,260 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+<style>
+    canvas {
+        border: 1px solid #a3a2a2;
+    }
+
+    .row {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        /* Per far avvolgere le colonne se non ci sta spazio */
+    }
+
+    .colStat {
+        flex: 1;
+        padding: 10px;
+        margin-right: 5px;
+        /* Spazio tra le colonne */
+    }
+
+    .col2 {
+        float: left;
+        margin-right: 3%;
+    }
+
+    .col {
+        margin-right: 1px;
+    }
+
+    /* Stile per il link "Vedi tutte le ore date/ricevute" */
+    .see-all {
+        clear: both;
+        display: block;
+        /* Rende il link un blocco per occupare l'intera larghezza */
+        margin-top: 10px;
+        /* Spazio superiore */
+    }
+    .graphContainer {
+        height:10%;
+        width:30%;
+    }
+</style>
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p class="titoli-pagine">Statistiche {{bdt.nome_bdt}}</p>
+        <br>
+        <div class="row">
+            <div class="colStat">
+                <form action="" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <br>
+                    <br>
+                    <div>
+                        <label  for="data_inizio">Data inizio periodo: </label>
+                        {{form.data_inizio}}
+                    </div>
+                    <br>
+                    <div>
+                        <label for="data_fine">Data fine periodo: </label>
+                        {{form.data_fine}}
+                    </div>
+                    <br>
+                    <div style="clear:both; align-items: right;">
+                        {% if mess > 0 %}
+                        {% if messages %}
+                        {% for message in messages %}
+                        {{message}}
+                        {% endfor %}
+                        {% endif %}
+                        {% endif %}
+                        <button type="submit" type="button" class="btn btn-warning" id="filterButton">Filtra per periodo</button>
+                        <p>Dati del periodo: {{periodo}}</p>
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="colStat" style="width:100%;">
+                <div id="graphContainer">
+                    <canvas id="graficoScambi" width="350" height="200" style="padding:2%;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="colStat">
+                <canvas id="scambiChart" width="400" height="300" style="padding:2%;"></canvas>
+            </div>
+            <div class="colStat">
+                <canvas id="categorieChart" width="400" height="300" style="padding:2%;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var ctxLine = document.getElementById('graficoScambi').getContext('2d');
+        var ctxBar = document.getElementById('scambiChart').getContext('2d');
+        var ctxCat = document.getElementById('categorieChart').getContext('2d');
+        var graficoLine;
+        var graficoBar;
+        var graficoCat;
+
+        function createLineChart(data) {
+            var date = Object.keys(data);
+            var n_scambi = Object.values(data);
+
+            if (graficoLine) {
+                graficoLine.destroy();
+            }
+
+            graficoLine = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: date,
+                    datasets: [{
+                        label: 'Numero di scambi per data',
+                        data: n_scambi,
+                        borderColor: 'rgb(255, 201, 14)',
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createBarChart(data) {
+            var nomiScambi = data.nomi_scambi;
+            var numeroScambi = data.numero_scambi;
+
+            if (graficoBar) {
+                graficoBar.destroy();
+            }
+
+            graficoBar = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: nomiScambi,
+                    datasets: [{
+                        label: '10 Soci con più scambi nel periodo',
+                        data: numeroScambi,
+                        backgroundColor: 'rgb(255, 201, 14, 0.1)',
+                        borderColor: 'rgb(255, 201, 14, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value) { return Number.isInteger(value) ? value : null; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createBarCategoria(data) {
+            var categorie = data.cat_scambi;
+            console.log(categorie)
+            var numeroScambi = data.numero_scambi;
+            console.log(numeroScambi)
+
+            if (graficoCat) {
+                graficoCat.destroy();
+            }
+
+            graficoCat = new Chart(ctxCat, {
+                type: 'bar',
+                data: {
+                    labels: categorie,
+                    datasets: [{
+                        label: '10 Categorie con più scambi nel periodo',
+                        data: numeroScambi,
+                        backgroundColor: 'rgb(13, 202, 240, 0.1)',
+                        borderColor: 'rgb(13, 202, 240, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value) { return Number.isInteger(value) ? value : null; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        var datiScambiJSON = '{{ scambi|escapejs }}';
+        var datiScambi;
+        try {
+            datiScambi = JSON.parse(datiScambiJSON);
+        } catch (e) {
+            console.error("Errore nel parsing del JSON per 'scambi':", e, datiScambiJSON);
+            datiScambi = {};
+        }
+        createLineChart(datiScambi);
+
+        var personeScambiJSON = '{{ personeScambi|escapejs }}';
+        var personeScambi;
+        try {
+            personeScambi = JSON.parse(personeScambiJSON);
+        } catch (e) {
+            console.error("Errore nel parsing del JSON per 'peroneScambi':", e, personeScambiJSON);
+            personeScambi = { nomi_scambi: [], numero_scambi: [] };
+        }
+        createBarChart(personeScambi);
+
+
+        var scambiCatJSON = '{{ catScambi|escapejs }}';
+        var scambiCat;
+        try {
+            scambiCat = JSON.parse(scambiCatJSON);
+        } catch (e) {
+            console.error("Errore nel parsing del JSON per 'peroneScambi':", e, personeScambiJSON);
+            scambiCat = { cat_scambi: [], numero_scambi: [] };
+        }
+        createBarCategoria(scambiCat);
+
+
+        $('#filterForm').on('submit', function(event) {
+            event.preventDefault();
+            $.ajax({
+                url: "{% url 'get_nscambi' %}",
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(data) {
+                    createLineChart(data);
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p class="titoli-pagine">Aggiorna BDT {{bdt.nome_bdt}}</p>
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <label for="nome_bdt"><b>Nome: </b></label>
+                <br>
+                {{form.nome_bdt}}
+            </div>
+            <br>
+            <div>
+                <label for="logo_bdt"><b>Logo </b></label>
+                
+                {{form.logo_bdt}}
+            </div>
+            {% if mess > 0 %}
+            {% if messages %}
+            {% for message in messages %}
+            {{message}}
+            {% endfor %}
+            {% endif %}
+            {% endif %}
+            <br>
+            <button type="submit" type="button" class="btn btn-success">Salva</button>
+        </form>
+    </div>
+</div>
+
+
+
+
+{% endblock %}

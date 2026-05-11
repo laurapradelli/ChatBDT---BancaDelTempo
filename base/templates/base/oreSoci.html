@@ -1,0 +1,103 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+
+{% load static %}
+
+<style>
+    table {
+        border-collapse: collapse;
+    }
+
+    td,
+    th {
+        border: 1px solid #c0bfbf;
+        padding: 8px;
+    }
+
+    .row {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .colOre {
+        flex: 1;
+        padding: 10px;
+    }
+</style>
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p class="titoli-pagine">Tabella ore date/ricevute</p>
+        <br>
+        <div class="row">
+            <div class="colOre">
+                <p>Filtra le ore visibili per periodo:</p>
+                <form action="" method="POST" id="formOre">
+                    {% csrf_token %}
+                    <label for="data_inizio">Data inizio periodo: </label>
+                    {{form.data_inizio}}
+                    <br>
+                    <label for="data_fine" style="margin-top: 3%;">Data fine periodo: </label>
+                    {{form.data_fine}}
+                    <br>
+                    {% if mess > 0%}
+                    {% if messages %}
+                    {% for message in messages %}
+                    {{message}}
+                    {% endfor %}
+                    {% endif %}
+                    {% endif %}
+                    <button type="submit" type="button" class="btn btn-warning" id="filtraOre"
+                        style="margin-top:3%">Filtra</button>
+                </form>
+                <br>
+                <a style="color:black" href="{% url 'ore_soci' %}">
+                    <p>Vedi i dati di sempre</p>
+                </a>
+                <br>
+                <p>Totale ore date {{tot_date}}</p>
+                <p>Totale ore ricevute {{tot_ric}}</p>
+            </div>
+            <div class="colOre">
+                <p style="font-size: 110%; font-weight: 500;">Dati del periodo {{periodo}}</p>
+                <table class="sortable">
+                    <tr>
+                        <td>
+                            <p><b>Socio</b><img src="{% static 'images/arrows.svg' %}" width="25px" height="25px" alt=""></p>
+                        </td>
+                        <td>
+                            <p><b>Ore date</b><img src="{% static 'images/arrows.svg' %}" width="25px" height="25px" alt=""></p>
+                        </td>
+                        <td>
+                            <p><b>Ore ricevute</b><img src="{% static 'images/arrows.svg' %}" width="25px" height="25px" alt=""></p>
+                        </td>
+                        <td>
+                            <p><b>Saldo</b><img src="{% static 'images/arrows.svg' %}" width="25px" height="25px" alt=""></p>
+                        </td>
+                    </tr>
+                    {% for user, dati in saldi.items %}
+                    <tr>
+                        {% if not user.tesoriere %}
+                        <td><a style=" color: black" href="{% url 'tes_profilo_socio' user.id %}">
+                                <p>{{user}}</p>
+                            </a></td>
+                        {% endif %}
+                        {% for nome, dato in dati.items %}
+                            {% if not user.tesoriere %}
+                                <td>{{dato}}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

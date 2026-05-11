@@ -1,0 +1,85 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p class="titoli-pagine">Aggiorna Evento</p>
+        <br>
+        <form class="responsive-form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="foto"><b>Foto: </b></label>
+                <br>
+                
+                {{form.foto}}
+
+                <br>
+                <br>
+                <br>
+                <label for="descrizione"><b>Descrizione: </b></label>
+                <br>
+      
+                {{form.descrizione}}
+        
+                
+            </div>
+            <div  class="form-group col-md-4">
+                <label for="titolo"><b>Titolo: </b></label>
+                <br>
+       
+                {{form.titolo}}
+
+                <br>
+                <br>
+                <br>
+                <br>
+          
+          
+        
+                <label for="data_ora"><b>Data e ora: </b></label>
+                <br>
+                {{form.data_ora}}
+            </div>
+          
+        </div>
+            {% if mess > 0 %}
+            {% if messages %}
+                {% for message in messages %}
+                    {{message}}
+                {% endfor %}
+            {% endif %}
+            {% endif %}
+            <br>
+            <button type="submit" type="button" class="btn btn-success" >Salva</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .form-group {
+        border-color: white;
+        flex: 1;
+        min-width: 200px; /* Ensure columns don't get too narrow */
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .form-group {
+            flex-basis: 100%; /* Make each column take full width */
+        }
+    }
+</style>
+
+
+
+
+
+{% endblock %}

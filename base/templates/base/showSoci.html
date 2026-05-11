@@ -1,0 +1,129 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<style>
+    table {
+        border-collapse: collapse
+    }
+
+    td,
+    th {
+        border: 1px solid #c0bfbf;
+        padding: 8px;
+    }
+
+    .divSoci {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .colSoci {
+        padding: 5%;
+        justify-content: center;
+        /* Centra verticalmente gli elementi */
+        float: left;
+    }
+
+    .socio {
+        background-color: rgb(255, 193, 7, 0.8);
+        border-radius: 10px;
+        padding: 3%;
+        width:50%;
+        text-align: center;
+    }
+
+    @media only screen and (max-width: 600px) {
+        .divSoci {
+            grid-template-columns: 1fr; /* Una colonna per dispositivi mobili */
+        }
+    }
+</style>
+
+{% include 'base/navbar.html' %}
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col" >
+        <p class="titoli-pagine" style="font-family: poppins;">Lista soci della Banca Del Tempo {{request.user.bdt}} </p>
+        <br>
+        <form class="header__search" method="GET" action="{% url 'show_soci' %}">
+            <input id="search-input" name="q" placeholder="Cerca socio..." list="user-list" />
+            <datalist id="user-list">
+            </datalist>
+        </form>
+        <br>
+
+        <a style=" color: black" href="{% url 'show_soci' %}">
+            <p style=" color: black; font-size: 115%; text-decoration-color: black ;">Vedi tutti</p>
+        </a>
+
+        <div class="divSoci">
+            <div class="colSoci">
+                {% for socio in prima_meta %}
+                {% if not socio.tesoriere %}
+                    <div class="socio">
+                        <p><a href="{% url 'tes_profilo_socio' socio.id %}" style="color:black">{{socio}}</a></p>
+                    </div>
+                    <br>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="colSoci">
+                {% for socio in sec_meta %}
+                {% if not socio.tesoriere %}
+                    <div class="socio">
+                        <p><a href="{% url 'tes_profilo_socio' socio.id %}" style="color:black;">{{socio}}</a></p>
+                    </div>
+                    <br>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#search-input').on('input', function () {
+            var searchText = $(this).val();
+            console.log("Testo di ricerca:", searchText);
+
+            // Effettua una richiesta AJAX per ottenere le corrispondenze basate sul testo di ricerca
+            $.ajax({
+                url: '/search_users/',
+                method: 'GET',
+                data: { search_text: searchText },
+                dataType: 'json',
+                success: function (data) {
+                    $('#user-list').empty();
+                    // Controlla se ci sono categorie restituite
+                    if (data.users) {
+                        console.log(data.users)
+                        var options = "";
+                        $.each(data.users, function (nome, id) {
+                            if (nome && nome.trim() !== "") {
+                                options += '<option value="' + nome + '"></option>';
+                            }
+                        });
+                        $('#user-list').html(options);
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error("Errore durante la richiesta AJAX:", textStatus, errorThrown);
+                }
+            });
+        });
+    });
+
+</script>
+
+
+{% endblock %}

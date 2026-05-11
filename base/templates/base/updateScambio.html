@@ -1,0 +1,159 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Funzione per catturare il cambio di selezione dell'area
+        $('#id_area').change(function () {
+            var areaId = $(this).val();
+            console.log("ID dell'area selezionata:", areaId);
+
+            // Effettua una richiesta AJAX per ottenere le categorie corrispondenti all'area selezionata
+            $.ajax({
+                url: '/get_categories/',
+                method: 'GET',
+                data: { area_id: areaId },
+                dataType: 'json',
+                success: function (data) {
+                    $('#categorie-list').empty();
+                    // Controlla se ci sono categorie restituite
+                    if (data.categories) {
+                        // Cicla attraverso le categorie e aggiungi ognuna al datalist
+                        $.each(data.categories, function (id, nome) {
+                            // Assicurati che il nome della categoria non sia vuoto o undefined
+                            if (nome && nome.trim() !== "") {
+                                $('#categorie-list').append('<option value="' + nome + '"></option>');
+                            }
+                        });
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error("Errore durante la richiesta AJAX:", textStatus, errorThrown);
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .custom-select-multiple{
+        width:90%;
+        font-size: 16px; /* per migliorare la leggibilità */
+        overflow: hidden;
+    }
+</style>
+
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <p class="titoli-pagine">Modifica scambio</p>
+        <br>
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="primaColonna">
+                <label for="donatori"><b>Donatore/i:</b></label>
+                <p style="font-size: 14px;">Ctrl + click per selezionare più di un socio</p>
+                {{form.donatori}}
+            </div>
+            <div class="form-group-left">
+                <label for="riceventi"><b>Ricevente/i:</b></label>
+                <p style="font-size: 14px;">Ctrl + click per selezionare più di un socio</p>
+                {{form.riceventi}}
+            </div>
+
+            <div class="form-group-left">
+                <div>
+                    <label for="durata"><b>Durata:</b></label>
+                    {{form.durata}}
+                </div>
+                <br>
+                <div>
+                    <label for="data"><b>Data:</b></label>
+                    {{form.data}}
+                </div>
+                <br>
+                <div>
+                    <label for="area"><b>Categoria di 1° livello:</b></label>
+                    {{form.area}}
+                </div>
+                <br>
+                <div>
+                    <label for="categoria"><b>Sottocategoria: </b></label>
+                    <input type="text" value="{{scambio.categoria.nome}}" name="categoria"
+                        list="categorie-list" />
+                    <datalist id="categorie-list">
+                    </datalist>
+                </div>
+                <br>
+                <div>
+                    <label for="note"><b>Note:</b></label>
+                    {{form.note}}
+                </div>
+                
+            </div>
+            <div style="clear:both; text-align: center;">
+                {% if mess > 0 %}
+                {% if messages %}
+                {% for message in messages %}
+                {{message}}
+                {% endfor %}
+                {% endif %}
+                {% endif %}
+                <br>
+                <button type="submit" class="btn btn-success">Salva</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var selects = document.querySelectorAll('.custom-select-multiple');
+        selects.forEach(function (select) {
+            var options = select.options.length;
+            var optionHeight = 27; // Altezza stimata di un'opzione (puoi regolarla)
+            var height = options * optionHeight;
+            select.style.height = height + 'px';
+        });
+    });
+</script>
+
+<style>
+    
+    .primaColonna {
+        float:left;
+    }
+    .form-group-left {
+        float: left;
+        margin-left:2%;
+        margin-right:2%;
+    }
+
+    label {
+        display: block;
+    }
+
+    textarea {
+        resize: none;
+        height: 50px;
+    }
+
+    @media (max-width: 400px) {
+        .form-container {
+            flex-direction: column;
+        }
+
+        .form-group-left {
+            min-width: 100%;
+            margin-top: 2%;
+            margin-left: 0%;
+        }
+    }
+</style>
+
+{% endblock %}

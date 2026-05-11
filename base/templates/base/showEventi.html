@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include 'base/navbar.html' %}
+
+{% load static %}
+
+<div class="home-container">
+    {% include 'base/menuLaterale.html' %}
+    <div class="col">
+        <div>
+            <p class="titoli-pagine" style="float:left;">Gli eventi della tua BDT</p>
+          
+            <a href="{% url 'create_evento' %}"><button style="margin-left:30px" type="button" class="btn btn-warning">Aggiunta Evento</button></a><br>
+            </div>
+            <br>
+            <div class="container">
+                <div class="row">
+                    {% for evento in eventi %}
+                    {% if evento.bdt == request.user.bdt %}
+                    <div class="col-sm">
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{evento.foto.url}}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{evento.titolo}}</h5>
+                                <p class="card-text">{{evento.descrizione}}</p>
+                                <p class="card-text">{{evento.data_ora}}</p>
+                                <a href="{% url 'update_evento' evento.id %}"><img src="{% static 'images/pencil.svg' %}" style="height:30px; width:30px; margin-right:5%;" alt="Modifica evento"></a>
+                                <a href="{% url 'delete_evento' evento.id %}"><img src="{% static 'images/trash.svg' %}" style="height:30px; width:30px;" alt="Elimina scambio"></a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}

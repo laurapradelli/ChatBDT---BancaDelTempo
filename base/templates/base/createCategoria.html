@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    {% include 'base/navbar.html' %}
+
+    <div class="home-container">
+        {% include 'base/menuLaterale.html' %}
+        <div class="col">
+            <p class="titoli-pagine">Aggiunta sottocategoria </p>
+            <br>
+
+            <form action="" method="POST" enctype="multipart/form-data">
+              
+                {% csrf_token %}
+                <div>
+                    <label  style="margin-bottom: 1%;"      for="nome">Nome Sottocategoria: </label>
+                    <br>
+                    {{form.nome}}
+
+
+                </div>
+                <br>
+                <div>
+                    <label  style="margin-bottom: 1%;"       for="area">Categoria di 1° livello: </label>
+                    <br>
+                 
+                    {{form.area}}
+                </div>
+                <br>
+                <button type="submit" type="button" class="btn btn-success">Salva</button>
+            </form>
+        </div>
+    </div>
+    
+{% endblock %}
