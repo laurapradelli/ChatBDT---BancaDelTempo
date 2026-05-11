@@ -16,6 +16,7 @@ import smtplib
 import random
 import json
 import openpyxl
+import os
 from io import BytesIO
 
 # Create your views here.
@@ -154,8 +155,8 @@ def recuperaPassword(request):
             smtp_server = 'smtp.gmail.com'
             smtp_port = 587
             smtp_username = "ChatBDT"
-            smtp_password = ""
-            sender = ""
+            smtp_password = os.environ.get('EMAIL_HOST_PASSWORD')
+            sender = os.environ.get('EMAIL_HOST_USER')
             subject = "Recupero password - ChatBDT"
             message = "Ciao,\nabbiamo ricevuto una richiesta per il ripristino della password.\nEcco a te la nuova password che puoi usare per entrare su ChatBDT: "+password+"\nTi consigliamo di cambiare subito questa password, non è sicura!\nIl team di ChatBDT"
             msg = EmailMessage()
