@@ -1,6 +1,6 @@
 ## ChatBDT Project
 
-Un'applicazione web basata su **Django 5.0** per l'organizzazione interna delle associazioni di volontariato "Banca del Tempo".
+Un'applicazione web basata su **Django 5.0** per l'organizzazione interna delle associazioni di volontariato "Banca del Tempo", che gestisce dinamicamente lo scambio delle ore tra i vari soci, con una doppia possibilità di autenticazione: in quanto socio o in quanto tesoriere.
 
 ## Struttura del Progetto
 
