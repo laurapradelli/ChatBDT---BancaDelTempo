@@ -2,6 +2,22 @@
 
 Un'applicazione web basata su **Django 5.0** per l'organizzazione interna delle associazioni di volontariato "Banca del Tempo", che gestisce dinamicamente lo scambio delle ore tra i vari soci, con una doppia possibilità di autenticazione: in quanto socio o in quanto tesoriere.
 
+I **soci** possono:
+  - Verificare il proprio saldo in ore
+  - Verificare la prorpia anagrafica e quella degli altri soci
+  - Inserire scambi con altri soci
+  - Vedere le categorie preferite della propria Banca del Tempo
+
+I **tesorieri** possono:
+  - Creare/Eliminare una nuova Banca del Tempo
+  - Creare/Eliminare soci
+  - Creare/Eliminare eventi
+  - Creare/Eliminare altri tesorieri
+  - Creare/Modificare/Eliminare categorie e sottocategorie degli scambi
+  - Creare/Modificare scambi tra soci
+  - Vedere le statistiche sulla propria Banca
+  - Scaricare i file .xlsl sui soci della Banca e sugli Scambi
+
 ## Struttura del Progetto
 
 Il progetto è organizzato seguendo la struttura standard di Django:
